@@ -1,4 +1,6 @@
+from textwrap import dedent
 import re
+
 def read_template(file):
     with open(file,'r') as file:
         content=file.readlines()
@@ -6,94 +8,47 @@ def read_template(file):
     content=str.join(content)
     content=content.strip()
     return content    
-content=read_template('assets/template.txt')
 
-stringArr=['Adjective','A First Name','Past Tense Verb','Plural Noun','Large Animal','Small Animal','A Girl\'s Name','First Name\'s','Number',' 1-50']
+content=read_template('assets/template.txt')
+stringArr=['Adjective','A First Name','Past Tense Verb','Plural Noun','Large Animal','Small Animal','A Girl\'s Name','Number',' 1-50']
 
 def parse(string,stringArr):
-    arr=[]
+    arr=re.findall('{(.+?)}',string)
     for keyword in stringArr:
-        arr.append(re.findall(keyword,string))
-        string=string.replace(keyword,'')
-    mergedList=[]
-    for i in arr:
-        mergedList += i   
-    return string
+        string=string.replace(keyword,'')   
+    return string,arr
 
 def merge(string,arr):
-    for i in arr:
-        string=string.replace('{}', i)   
+    string=string.format(*arr)   
     return string
 
 def game():
-    print('Welcome to madlib, you will be prompted with questions and you need to answer them so that you can have a complete sentence at the end.')
+    print(dedent('''
+    ************************
+    Welcome to madlib, you will be prompted with questions and you need to answer them so that you can have a complete sentence at the end.
+
+    ************************
+
+    '''))
     inputArr=[]
-    print('\nPlease Enter an Adjective')
-    inputArr.append(input("> "))
+    partsArr=parse(content,stringArr)[1]
 
-    print('\nPlease Enter an Adjective')
-    inputArr.append(input("> "))
-
-    print('\nPlease Enter a first name')
-    inputArr.append(input("> "))
-
-    print('\nPlease Enter a past tense verb')
-    inputArr.append(input("> "))
-
-    print('\nPlease Enter a First Name')
-    inputArr.append(input("> "))
-
-    print('\nPlease Enter an Adjective')
-    inputArr.append(input("> "))
-
-    print('\nPlease Enter an Adjective')
-    inputArr.append(input("> "))
-
-    print('\nPlease Enter a plural noun')
-    inputArr.append(input("> "))
-
-    print('\nPlease Enter a large animal')
-    inputArr.append(input("> "))
-
-    print('\nPlease Enter a small animal')
-    inputArr.append(input("> "))
-
-    print('\nPlease Enter a Girl\'s Name')
-    inputArr.append(input("> "))
-
-    print('\nPlease Enter an Adjective')
-    inputArr.append(input("> "))
-
-    print('\nPlease Enter a plural noun')
-    inputArr.append(input("> "))
-
-    print('\nPlease Enter an Adjective')
-    inputArr.append(input("> "))
-
-    print('\nPlease Enter a plural noun')
-    inputArr.append(input("> "))
-
-    print('\nPlease Enter a Number (1-50)')
-    inputArr.append(input("> "))
-
-    print('\nPlease Enter a first name')
-    inputArr.append(input("> "))
-
-    print('\nPlease Enter a number')
-    inputArr.append(input("> "))
-
-    print('\nPlease Enter a plural noun')
-    inputArr.append(input("> "))
-
-    print('\nPlease Enter a number')
-    inputArr.append(input("> "))
-
-    print('\nPlease Enter a plural noun')
-    inputArr.append(input("> "))
+    for i in partsArr:
+        print(f'\nPlease Enter {i}')
+        inputArr.append(input("> "))
+    return inputArr
     
-    string=parse(content,stringArr)
-    print('Here is the result:\n ',merge(string,inputArr))
+def result():
+    string=parse(content,stringArr)[0]
+    inputArr=game()
+    with open('assets/copy.text', 'w') as file:
+        file.write(merge(string,inputArr))
+    with open('assets/copy.text', 'r') as file:
+        copy=file.readlines()
+    string=''
+    for i in copy:
+        string += i   
+    print(dedent(f'Here is the result:\n {string}'))
 
-game()
-
+result()
        

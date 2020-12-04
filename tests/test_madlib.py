@@ -11,7 +11,7 @@ def test_parse():
     string='This is a test for the second function which is supposed to return an array and a string'
     arr=[' second',' array']
     actual=parse(string,arr)
-    expected="This is a test for the function which is supposed to return an and a string"
+    expected="This is a test for the function which is supposed to return an and a string",[' second',' array']
     assert actual == expected
 
 def test_merge():
